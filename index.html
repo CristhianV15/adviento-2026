@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#102e29" />
+  <title>25 días contigo · Calendario de Adviento</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #081e1c;
+      --cream: #fff4dd;
+      --muted: #d5c9b3;
+      --gold: #e9c682;
+      --red: #ab3e4d;
+      --green: #295b4d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      color: var(--cream);
+      background:
+        radial-gradient(ellipse at top left, #28534588, transparent 55%),
+        radial-gradient(ellipse at bottom right, #782f4155, transparent 50%),
+        var(--background);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    button:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 5px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* Decoración navideña */
+
+    .snow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .snow span {
+      position: absolute;
+      top: -25px;
+      left: var(--left);
+      width: var(--size);
+      height: var(--size);
+      background: white;
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: snowfall var(--duration) linear infinite;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes snowfall {
+      to {
+        transform: translate(35px, 110vh);
+      }
+    }
+
+    .lights {
+      display: flex;
+      justify-content: space-around;
+      border-top: 2px solid #627164;
+      padding-top: 0;
+      height: 38px;
+    }
+
+    .lights span {
+      width: 10px;
+      height: 17px;
+      border-radius: 3px 3px 8px 8px;
+      background: var(--gold);
+      box-shadow: 0 0 18px #e9c68299;
+    }
+
+    .lights span:nth-child(3n) {
+      background: #db7180;
+      box-shadow: 0 0 18px #db718099;
+    }
+
+    .lights span:nth-child(3n + 1) {
+      background: #9bcab1;
+      box-shadow: 0 0 18px #9bcab199;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, 100%);
+      margin: auto;
+      padding: 0 22px 45px;
+    }
+
+    /* Encabezado */
+
+    .hero {
+      max-width: 760px;
+      margin: 30px auto 32px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: normal;
+      font-size: clamp(2.8rem, 8vw, 5rem);
+      line-height: 1.05;
+      margin: 16px 0;
+    }
+
+    h1 em {
+      color: var(--gold);
+    }
+
+    .dedication {
+      max-width: 610px;
+      margin: auto;
+      line-height: 1.8;
+      color: var(--muted);
+      text-wrap: pretty;
+    }
+
+    .dedication strong {
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    .countdown-panel {
+      margin: 25px auto 0;
+      padding: 18px 20px;
+      width: fit-content;
+      max-width: 100%;
+      border: 1px solid #e9c68238;
+      border-radius: 18px;
+      background: #ffffff05;
+    }
+
+    .countdown-label {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .countdown {
+      color: var(--gold);
+      font-size: clamp(1.1rem, 4vw, 1.55rem);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .calendar-info {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .preview-banner {
+      margin-bottom: 18px;
+      padding: 14px;
+      text-align: center;
+      background: #724b17;
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+    }
+
+    /* Calendario */
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .day {
+      position: relative;
+      isolation: isolate;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 0;
+      min-height: 190px;
+      padding: 16px 10px;
+      color: var(--cream);
+      border: 1px solid #ffe7ad3b;
+      border-radius: 13px;
+      background: linear-gradient(145deg, #a94352, #702a39);
+      box-shadow: 0 10px 24px #0003;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .day:nth-child(even) {
+      background: linear-gradient(145deg, #356c57, #1b4439);
+    }
+
+    /* Pliegues del sobre */
+
+    .day::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 0 0 auto;
+      height: 57%;
+      background: #ffffff14;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+    }
+
+    .day::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 35% 0 0;
+      background: #0000000d;
+      clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .day:hover {
+      transform: translateY(-5px) rotate(-1deg);
+    }
+
+    .day-number {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 3rem;
+      line-height: 1;
+      color: #ffe4b3;
+    }
+
+    .day-month {
+      margin-top: 5px;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .day-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 14px;
+      font-size: 0.7rem;
+      color: #fff0d8;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .day.locked {
+      filter: saturate(0.55);
+    }
+
+    .day.locked .day-status {
+      opacity: 0.7;
+    }
+
+    .day.available {
+      border-color: #e9c682bb;
+      box-shadow: 0 0 0 1px #e9c68222, 0 10px 28px #0004;
+    }
+
+    .day.opened .day-status {
+      color: #d2f0d5;
+    }
+
+    .day.today {
+      outline: 2px solid var(--gold);
+      outline-offset: 4px;
+    }
+
+    .day:last-child {
+      background: linear-gradient(145deg, #8d6632, #654726);
+    }
+
+    .footer {
+      margin-top: 34px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.8;
+    }
+
+    /* Modal */
+
+    dialog {
+      width: min(480px, calc(100% - 28px));
+      max-height: 90vh;
+      max-height: 90dvh;
+      padding: 0;
+      border: 1px solid #e9c68270;
+      border-radius: 25px;
+      color: var(--cream);
+      background:
+        radial-gradient(circle at top, #345b45, transparent 60%),
+        #102e29;
+      box-shadow: 0 30px 100px #0009;
+      overflow-y: auto;
+    }
+
+    dialog::backdrop {
+      background: #020d0bd9;
+      backdrop-filter: blur(8px);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    .modal-content {
+      position: relative;
+      padding: 40px 25px 28px;
+      text-align: center;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid #ffffff30;
+      background: #ffffff0d;
+      color: white;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    .modal-date {
+      margin: 0;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+      font-size: 0.75rem;
+    }
+
+    .modal-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: normal;
+      font-size: 2rem;
+      margin: 14px 0 20px;
+    }
+
+    /* Regalo que se abre */
+
+    .gift-animation {
+      position: relative;
+      height: 140px;
+      margin: 10px auto 20px;
+      width: 155px;
+    }
+
+    .gift-box {
+      position: absolute;
+      bottom: 0;
+      left: 17px;
+      width: 120px;
+      height: 90px;
+      background: #b94956;
+      border-radius: 0 0 8px 8px;
+      box-shadow: inset -15px 0 #0001;
+    }
+
+    .gift-box::after,
+    .gift-lid::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: calc(50% - 10px);
+      width: 20px;
+      height: 100%;
+      background: var(--gold);
+    }
+
+    .gift-lid {
+      position: absolute;
+      z-index: 2;
+      bottom: 82px;
+      left: 10px;
+      width: 134px;
+      height: 25px;
+      border-radius: 5px;
+      background: #d25b69;
+    }
+
+    .gift-lid::before {
+      content: "";
+      position: absolute;
+      bottom: 24px;
+      left: 42px;
+      width: 45px;
+      height: 22px;
+      border: 6px solid var(--gold);
+      border-radius: 50% 50% 10% 10%;
+    }
+
+    .gift-spark {
+      position: absolute;
+      inset: 5px 0 auto;
+      color: var(--gold);
+      font-size: 2rem;
+      opacity: 0;
+    }
+
+    dialog.revealing .gift-lid {
+      animation: open-gift 1.1s ease forwards;
+    }
+
+    dialog.revealing .gift-spark {
+      animation: sparkle 1.2s ease 0.4s forwards;
+    }
+
+    @keyframes open-gift {
+      0%, 25% { transform: translateY(0) rotate(0); }
+      45% { transform: translateY(-8px) rotate(-5deg); }
+      100% { transform: translate(-20px, -45px) rotate(-16deg); }
+    }
+
+    @keyframes sparkle {
+      0% { opacity: 0; transform: scale(0.5); }
+      60%, 100% { opacity: 1; transform: scale(1); }
+    }
+
+    .gift-details {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+
+    dialog.revealing .gift-details {
+      animation: reveal-details 0.6s ease 0.7s forwards;
+    }
+
+    @keyframes reveal-details {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .gift-image {
+      display: block;
+      width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+      border-radius: 15px;
+      background: #fff5e6;
+    }
+
+    .gift-label {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 6px 15px;
+      border: 1px solid #e9c68266;
+      border-radius: 999px;
+      color: var(--gold);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+    }
+
+    .gift-message {
+      line-height: 1.8;
+      color: var(--muted);
+      white-space: pre-line;
+    }
+
+    .modal-note {
+      margin: 20px 0 0;
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 10;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: calc(100% - 30px);
+      padding: 14px 20px;
+      border: 1px solid #e9c68270;
+      border-radius: 14px;
+      background: #183c32;
+      color: var(--cream);
+      text-align: center;
+      box-shadow: 0 10px 40px #0006;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 850px) {
+      .calendar {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 17px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        padding: 0 17px 30px;
+      }
+
+      .hero {
+        margin-top: 22px;
+      }
+
+      .calendar {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .day {
+        min-height: 150px;
+        padding: 13px 5px;
+      }
+
+      .day-number {
+        font-size: 2.4rem;
+      }
+
+      .day-status {
+        font-size: 0.62rem;
+      }
+
+      .dedication {
+        font-size: 0.92rem;
+      }
+    }
+
+    @media (max-width: 350px) {
+      .calendar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .snow {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="snow" id="snow" aria-hidden="true"></div>
+
+  <main class="page">
+    <div class="lights" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span>
+    </div>
+
+    <header class="hero">
+      <p class="eyebrow">Un diciembre hecho para ti</p>
+
+      <h1>25 días.<br /><em>25 sonrisas contigo.</em></h1>
+
+      <p class="dedication">
+        Hola, chiquita. Este diciembre quería regalarte algo más
+        que un solo detalle:
+        <strong>25 pequeñas razones para sonreír.</strong>
+        <br /><br />
+        Aquí hay un sobre para cada día. Algunos guardarán planes,
+        otros palabras y otros un poquito de nosotros.
+        Sin hacer trampa: las cosas bonitas también se disfrutan
+        esperándolas.
+      </p>
+
+      <div class="countdown-panel">
+        <p class="countdown-label" id="countdown-label">
+          Nuestra cuenta regresiva empieza aquí
+        </p>
+        <div class="countdown" id="countdown">Calculando…</div>
+      </div>
+
+      <p class="calendar-info" id="calendar-info"></p>
+    </header>
+
+    <div class="preview-banner" id="preview-banner" hidden>
+      MODO DE PRUEBA: todos los sobres están desbloqueados.
+      Desactívalo antes de publicar.
+    </div>
+
+    <section
+      class="calendar"
+      id="calendar"
+      aria-label="Calendario de Adviento: 25 sobres"
+    ></section>
+
+    <footer class="footer">
+      Un sobre por día. Un detalle pensado para ti.<br />
+      Con cariño, tu soporte 24/7.
+    </footer>
+  </main>
+
+  <dialog id="gift-modal" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <button
+        class="close-modal"
+        id="close-modal"
+        type="button"
+        aria-label="Cerrar regalo"
+        autofocus
+      >×</button>
+
+      <p class="modal-date" id="modal-date"></p>
+      <h2 class="modal-title" id="modal-title"></h2>
+
+      <div class="gift-animation" aria-hidden="true">
+        <div class="gift-spark">✧ ✦ ✧</div>
+        <div class="gift-box"></div>
+        <div class="gift-lid"></div>
+      </div>
+
+      <div class="gift-details">
+        <img
+          class="gift-image"
+          id="gift-image"
+          alt="Ilustración de un regalo navideño"
+        />
+
+        <div class="gift-label" id="gift-label">SOON</div>
+
+        <p class="gift-message" id="gift-message"></p>
+
+        <p class="modal-note">
+          Un pequeño detalle, pensado solo para ti.
+        </p>
+      </div>
+    </div>
+  </dialog>
+
+  <div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+    hidden
+  ></div>
+
+  <script>
+    /* =====================================================
+       CONFIGURACIÓN
+       ===================================================== */
+
+    const YEAR = 2026;
+
+    // false = respeta las fechas reales.
+    // true = abre todos los días para probar.
+    // NO publiques la versión de prueba con true.
+    const PREVIEW_MODE = false;
+
+    // Medianoche de Lima: UTC-05:00.
+    const LIMA_OFFSET = "-05:00";
+
+    /* =====================================================
+       IMAGEN PREDETERMINADA
+       Incluida dentro del HTML: no hay que subirla.
+       ===================================================== */
+
+    const DEFAULT_IMAGE = "data:image/svg+xml;charset=UTF-8," +
+      encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="800" height="500" viewBox="0 0 800 500">
+          <rect width="800" height="500" rx="28" fill="#fff3df"/>
+
+          <circle cx="105" cy="90" r="45" fill="#e9c682" opacity=".3"/>
+          <circle cx="720" cy="420" r="100" fill="#e9c682" opacity=".22"/>
+
+          <g fill="#d5ae65">
+            <path d="M175 120l7 19 19 7-19 7-7 19-7-19-19-7 19-7z"/>
+            <path d="M615 105l6 16 16 6-16 6-6 16-6-16-16-6 16-6z"/>
+            <path d="M660 315l7 19 19 7-19 7-7 19-7-19-19-7 19-7z"/>
+          </g>
+
+          <ellipse cx="400" cy="395" rx="150" ry="20"
+                   fill="#183c32" opacity=".1"/>
+
+          <rect x="290" y="210" width="220" height="175"
+                rx="10" fill="#a93e4e"/>
+          <rect x="278" y="190" width="244" height="45"
+                rx="8" fill="#c95563"/>
+          <rect x="380" y="190" width="40" height="195"
+                fill="#e5be72"/>
+
+          <path d="M400 190c-85 0-98-70-52-70 30 0 52 45 52 70z"
+                fill="none" stroke="#d7ac5d" stroke-width="17"/>
+          <path d="M400 190c85 0 98-70 52-70-30 0-52 45-52 70z"
+                fill="none" stroke="#d7ac5d" stroke-width="17"/>
+
+          <path d="M180 345l55-115 55 115z" fill="#2f604c"/>
+          <rect x="227" y="345" width="16" height="35" fill="#8c623e"/>
+
+          <text x="400" y="455" text-anchor="middle"
+                font-family="Georgia,serif" font-size="25"
+                fill="#2b5143">Un detalle solo para ti</text>
+        </svg>
+      `);
+
+    /* =====================================================
+       LOS 25 REGALOS
+       Por ahora todos tienen SOON y la misma imagen.
+       Después modificaremos cada día por separado.
+       ===================================================== */
+
+    const gifts = Array.from({ length: 25 }, (_, index) => ({
+      day: index + 1,
+      title: "Una sorpresa para ti",
+      label: "SOON",
+      message:
+        "Aquí aparecerá tu sorpresa de este día.\n" +
+        "La estoy preparando con mucho cariño.",
+      image: DEFAULT_IMAGE,
+      imageAlt: "Un regalo navideño preparado para ti"
+    }));
+
+    /*
+      EJEMPLO PARA PERSONALIZAR MÁS ADELANTE:
+
+      gifts[0] = {
+        day: 1,
+        title: "Una cena contigo",
+        label: "VALE POR",
+        message: "Una cena juntos. Tú eliges el lugar.",
+        image: "img/dia1.jpg",
+        imageAlt: "Nuestro plan para cenar"
+      };
+
+      gifts[0] corresponde al día 1.
+      gifts[1] corresponde al día 2.
+      ...
+      gifts[24] corresponde al día 25.
+    */
+
+    /* =====================================================
+       ELEMENTOS
+       ===================================================== */
+
+    const calendar = document.getElementById("calendar");
+    const countdown = document.getElementById("countdown");
+    const countdownLabel = document.getElementById("countdown-label");
+    const calendarInfo = document.getElementById("calendar-info");
+    const previewBanner = document.getElementById("preview-banner");
+
+    const modal = document.getElementById("gift-modal");
+    const closeModalButton = document.getElementById("close-modal");
+    const modalDate = document.getElementById("modal-date");
+    const modalTitle = document.getElementById("modal-title");
+    const giftImage = document.getElementById("gift-image");
+    const giftLabel = document.getElementById("gift-label");
+    const giftMessage = document.getElementById("gift-message");
+    const toast = document.getElementById("toast");
+
+    const STORAGE_KEY = `adviento-${YEAR}-sobres-abiertos`;
+
+    let openedDays = loadOpenedDays();
+    let lastState = "";
+    let toastTimer;
+    let animationFrame;
+
+    /* =====================================================
+       FECHAS
+       ===================================================== */
+
+    function unlockTime(day) {
+      const paddedDay = String(day).padStart(2, "0");
+
+      return new Date(
+        `${YEAR}-12-${paddedDay}T00:00:00${LIMA_OFFSET}`
+      ).getTime();
+    }
+
+    function isUnlocked(day, now = Date.now()) {
+      return PREVIEW_MODE || now >= unlockTime(day);
+    }
+
+    const limaFormatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Lima",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+
+    function dateInLima(timestamp) {
+      const parts = limaFormatter.formatToParts(new Date(timestamp));
+      const values = {};
+
+      for (const part of parts) {
+        values[part.type] = part.value;
+      }
+
+      return `${values.year}-${values.month}-${values.day}`;
+    }
+
+    function isToday(day, now) {
+      return dateInLima(now) ===
+        `${YEAR}-12-${String(day).padStart(2, "0")}`;
+    }
+
+    /* =====================================================
+       SOBRES ABIERTOS EN ESTE NAVEGADOR
+       ===================================================== */
+
+    function loadOpenedDays() {
+      try {
+        const saved = JSON.parse(
+          localStorage.getItem(STORAGE_KEY) || "[]"
+        );
+
+        return new Set(
+          Array.isArray(saved)
+            ? saved.filter(day =>
+                Number.isInteger(day) && day >= 1 && day <= 25
+              )
+            : []
+        );
+      } catch {
+        return new Set();
+      }
+    }
+
+    function rememberOpenedDay(day) {
+      // Las pruebas no alteran el historial real.
+      if (PREVIEW_MODE) return;
+
+      openedDays.add(day);
+
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify([...openedDays])
+        );
+      } catch {
+        // El calendario sigue funcionando sin almacenamiento.
+      }
+    }
+
+    /* =====================================================
+       CREAR LOS 25 SOBRES
+       ===================================================== */
+
+    function buildCalendar() {
+      const fragment = document.createDocumentFragment();
+
+      gifts.forEach(gift => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "day";
+        button.dataset.day = gift.day;
+
+        button.innerHTML = `
+          <span class="day-number">${gift.day}</span>
+          <span class="day-month">Diciembre</span>
+          <span class="day-status">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span class="status-text"></span>
+          </span>
+        `;
+
+        button.addEventListener("click", () => openGift(gift.day));
+        fragment.appendChild(button);
+      });
+
+      calendar.appendChild(fragment);
+    }
+
+    function updateEnvelopes(now = Date.now()) {
+      calendar.querySelectorAll(".day").forEach(button => {
+        const day = Number(button.dataset.day);
+        const unlocked = isUnlocked(day, now);
+        const opened = unlocked && openedDays.has(day);
+
+        button.classList.toggle("locked", !unlocked);
+        button.classList.toggle("available", unlocked);
+        button.classList.toggle("opened", opened);
+        button.classList.toggle("today", isToday(day, now));
+
+        // Permite pulsar el bloqueado para mostrar cuándo se abre,
+        // pero openGift vuelve a comprobar la fecha.
+        button.setAttribute("aria-disabled", String(!unlocked));
+
+        const status = !unlocked
+          ? "Aún no"
+          : opened
+            ? "Volver a ver"
+            : "Abrir sobre";
+
+        button.querySelector(".status-text").textContent = status;
+
+        button.setAttribute(
+          "aria-label",
+          `${day} de diciembre. ${
+            unlocked
+              ? status
+              : "Bloqueado hasta las 00:00, hora de Lima"
+          }`
+        );
+      });
+    }
+
+    /* =====================================================
+       CONTADOR HASTA EL PRÓXIMO SOBRE
+       ===================================================== */
+
+    function updateCountdown() {
+      const now = Date.now();
+
+      const available = gifts.filter(
+        gift => now >= unlockTime(gift.day)
+      ).length;
+
+      const state = [
+        PREVIEW_MODE,
+        available,
+        dateInLima(now)
+      ].join("-");
+
+      if (state !== lastState) {
+        updateEnvelopes(now);
+        lastState = state;
+      }
+
+      if (PREVIEW_MODE) {
+        countdownLabel.textContent = "Vista de prueba";
+        countdown.textContent = "Los 25 sobres están disponibles";
+        return;
+      }
+
+      const nextGift = gifts.find(
+        gift => now < unlockTime(gift.day)
+      );
+
+      calendarInfo.textContent =
+        `${available} de 25 sobres disponibles · ` +
+        "Se abren a las 00:00, hora de Lima.";
+
+      if (!nextGift) {
+        countdownLabel.textContent = "Ya están todos tus regalos";
+        countdown.textContent = "25 detalles. Todos para ti.";
+        return;
+      }
+
+      countdownLabel.textContent = available === 0
+        ? "El primer sobre se abre en"
+        : `El sobre ${nextGift.day} se abre en`;
+
+      const remaining = Math.max(
+        0,
+        Math.ceil((unlockTime(nextGift.day) - now) / 1000)
+      );
+
+      const days = Math.floor(remaining / 86400);
+      const hours = Math.floor((remaining % 86400) / 3600);
+      const minutes = Math.floor((remaining % 3600) / 60);
+      const seconds = remaining % 60;
+      const pad = value => String(value).padStart(2, "0");
+
+      countdown.textContent =
+        `${days} d · ${pad(hours)} h · ` +
+        `${pad(minutes)} min · ${pad(seconds)} s`;
+    }
+
+    /* =====================================================
+       ABRIR EL MODAL
+       ===================================================== */
+
+    function openGift(day) {
+      if (!isUnlocked(day)) {
+        showToast(
+          `No comas ansias. Este sobre se abre el ${day} ` +
+          `de diciembre de ${YEAR} a las 00:00, hora de Lima.`
+        );
+        return;
+      }
+
+      if (modal.open) return;
+
+      const gift = gifts.find(item => item.day === day);
+
+      modalDate.textContent = `${day} de diciembre`;
+      modalTitle.textContent = gift.title;
+      giftLabel.textContent = gift.label;
+      giftMessage.textContent = gift.message;
+      giftImage.alt = gift.imageAlt;
+      giftImage.src = gift.image || DEFAULT_IMAGE;
+
+      rememberOpenedDay(day);
+      updateEnvelopes();
+
+      modal.classList.remove("revealing");
+      modal.showModal();
+      modal.scrollTop = 0;
+      document.body.classList.add("modal-open");
+
+      // Reinicia la animación cada vez que se abre un sobre.
+      void modal.offsetWidth;
+
+      animationFrame = requestAnimationFrame(() => {
+        if (modal.open) modal.classList.add("revealing");
+      });
+    }
+
+    giftImage.addEventListener("error", () => {
+      if (giftImage.src !== DEFAULT_IMAGE) {
+        giftImage.src = DEFAULT_IMAGE;
+      }
+    });
+
+    closeModalButton.addEventListener("click", () => {
+      modal.close();
+    });
+
+    // Cerrar pulsando fuera de la ventana.
+    modal.addEventListener("click", event => {
+      if (event.target !== modal) return;
+
+      const bounds = modal.getBoundingClientRect();
+
+      const outside =
+        event.clientX < bounds.left ||
+        event.clientX > bounds.right ||
+        event.clientY < bounds.top ||
+        event.clientY > bounds.bottom;
+
+      if (outside) modal.close();
+    });
+
+    // También se ejecuta al cerrar con Escape.
+    modal.addEventListener("close", () => {
+      cancelAnimationFrame(animationFrame);
+      modal.classList.remove("revealing");
+      document.body.classList.remove("modal-open");
+    });
+
+    /* =====================================================
+       AVISO DE SOBRE BLOQUEADO
+       ===================================================== */
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.hidden = false;
+
+      toastTimer = setTimeout(() => {
+        toast.hidden = true;
+      }, 5000);
+    }
+
+    /* =====================================================
+       NIEVE DECORATIVA
+       ===================================================== */
+
+    function createSnow() {
+      const container = document.getElementById("snow");
+
+      for (let i = 0; i < 24; i++) {
+        const flake = document.createElement("span");
+
+        flake.style.setProperty("--left", `${Math.random() * 100}%`);
+        flake.style.setProperty("--size", `${2 + Math.random() * 4}px`);
+        flake.style.setProperty("--duration", `${12 + Math.random() * 15}s`);
+        flake.style.setProperty("--delay", `${-Math.random() * 25}s`);
+
+        container.appendChild(flake);
+      }
+    }
+
+    /* =====================================================
+       INICIAR
+       ===================================================== */
+
+    previewBanner.hidden = !PREVIEW_MODE;
+
+    buildCalendar();
+    createSnow();
+    updateCountdown();
+
+    setInterval(updateCountdown, 1000);
+
+    // Revisar las fechas al volver a la pestaña.
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) updateCountdown();
+    });
+  </script>
+</body>
+</html>
